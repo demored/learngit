@@ -11,5 +11,12 @@ print(dict2, dict2['name'])
 dict3 = dict()
 print(dict3)
 
-dict4 = [(1.)]
+dict4 = [("hello", 2), ("world", 3)]
+print(dict4, dict(dict4))
 
+##赋值时，修改list元素对另一个list有没有影响
+print("==============")
+dict5 = dict2
+print(dict5)
+dict2.clear()
+print(dict5)
