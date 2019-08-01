@@ -14,6 +14,8 @@ def localfun():
 
 localfun()
 print(num)
+
+
 #全局变量
 
 def globalFun():

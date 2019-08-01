@@ -2,3 +2,5 @@
 composer.lock
 *.exe
 /venv
+/__pycache__
+

@@ -8,4 +8,11 @@ if a:
 else:
     print("a为假")
 
+### while结构
+
+while a >2 :
+    print(a)
+    a -= 1
+
+##continue
 
