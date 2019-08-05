@@ -82,7 +82,6 @@ class D():
 d = D()
 d.getName()
 D.getName()
-        
 
 class F:
     getName1 = 'haha'
@@ -111,11 +110,5 @@ a.name = 'name'
 a.age = 'age'
 #a.score = 11
 print(a.age)
-
-
-
-
-
-
 
 

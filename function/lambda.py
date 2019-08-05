@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #coding=utf-8
 
-
+#
 '''
 lambda表达式的使用
 '''
@@ -15,6 +15,6 @@ print(a(2,4))
 a,b= 100,200
 user = lambda x,y:x+y if a > b else print("a > b")
 
-print(user)
+print(user) #打印出来是lambda表达式的函数地址
 
 
