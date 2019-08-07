@@ -8,12 +8,15 @@ class Pobj:
         pobj's Document , test get mysql data
     """
     docName = 'this is main moudle'
+
+
     def __init__(self , paramName):
         print(paramName)
         if paramName != '':
             self.docName = paramName
         else:
             pass
+
     def getSelf(self):
         return self
 
