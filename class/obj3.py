@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#coding=utf-8
+# -- coding: utf-8 --
 
 '''
 1、roperty定义属性
@@ -79,4 +79,25 @@ class D(D1):
 d = D()
 d.info()
 
+###################调用父类的构造函数###################
 
+class E1:
+    def __init__(self, name , user):
+        print("我是E1的构造函数")
+        print("name的值为", name)
+        print("user的值为", user)
+
+class E2:
+    def __init__(self):
+        print("我是E2的构造函数")
+        print("你妹的")
+
+class E(E1, E2):
+
+    def __init__(self,name,user):
+        print("我是E的构造函数")
+        super().__init__(name,user)
+        E2.__init__(self)
+        # super(E2,self).__init__()
+
+e = E("张三", "李四的故事")
