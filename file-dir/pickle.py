@@ -1,11 +1,10 @@
 #!/usr/bin.pyhton
-#coding=utf-8
+#coding:utf-8
 
-import pickle
 file = open('./pick.txt' , 'wb')
 listdata = {'username':'mysql' , 'lang':'english'}
 print(listdata)
-pickle.dump(listdata,file)
+pickle.dump(listdata, file)
 file.close()
 
 

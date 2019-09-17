@@ -17,7 +17,8 @@ print('the num is ',num,'left join ' , 'left str')
 print(dir(list))
 print(help(list))
 print('\n');
-import import1
+from module import import1
+
 import1.importfun()
 
 
