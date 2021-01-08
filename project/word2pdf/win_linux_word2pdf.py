@@ -27,6 +27,7 @@ def doc2pdf(docPath, pdfPath):
         :param doc: path to document
         """
     docPathTrue = os.path.abspath(docPath)  # bugfix - searching files in windows/system32
+    pdfPath = os.path.abspath(pdfPath)
 
     if client is None:  # 判断环境，linux环境这里肯定为None
         return doc2pdf_linux(docPathTrue, pdfPath)
@@ -44,7 +45,6 @@ def doc2pdf(docPath, pdfPath):
 
     word = gencache.EnsureDispatch('kwps.Application')
     doc = word.Documents.Open(docPathTrue, ReadOnly=1)
-
     doc.ExportAsFixedFormat(pdfPath,
                             constants.wdExportFormatPDF,
                             Item=constants.wdExportDocumentWithMarkup,
@@ -67,7 +67,7 @@ def doc2pdf_linux(docPath, pdfPath):
 
 if __name__ == '__main__':
     doc2pdf(sys.argv[1], sys.argv[2])
-    # doc_file = "C:\\Users\\Administrator\\Pictures\\测试.doc"
-    # pdf_file = "C:\\Users\\Administrator\\Pictures\\测试.pdf"
+    # doc_file = "D:\\python-codes\\project\word2pdf\\[CM-IM-005-V1.0]信息安全策略.doc"
+    # pdf_file = "D:\\python-codes\\project\word2pdf\\[CM-IM-005-V1.0]信息安全策略.pdf"
     # print(os.path.isfile(doc_file))
     # doc2pdf(doc_file, pdf_file)
