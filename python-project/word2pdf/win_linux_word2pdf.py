@@ -67,6 +67,7 @@ def doc2pdf_linux(docPath, pdfPath):
 
 if __name__ == '__main__':
     doc2pdf(sys.argv[1], sys.argv[2])
+    print("运行执行");
     # doc_file = "D:\\python-codes\\project\word2pdf\\[CM-IM-005-V1.0]信息安全策略.doc"
     # pdf_file = "D:\\python-codes\\project\word2pdf\\[CM-IM-005-V1.0]信息安全策略.pdf"
     # print(os.path.isfile(doc_file))
