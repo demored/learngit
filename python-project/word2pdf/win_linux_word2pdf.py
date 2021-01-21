@@ -32,17 +32,6 @@ def doc2pdf(docPath, pdfPath):
     if client is None:  # 判断环境，linux环境这里肯定为None
         return doc2pdf_linux(docPathTrue, pdfPath)
 
-    # name, ext = os.path.splitext(doc)
-    # try:
-    #     word = client.DispatchEx("Word.Application")
-    #     worddoc = word.Documents.Open(doc)
-    #     worddoc.SaveAs(name + '.pdf', FileFormat=17)
-    # except Exception:
-    #     raise
-    # finally:
-    #     worddoc.Close()
-    #     word.Quit()
-
     word = gencache.EnsureDispatch('kwps.Application')
     doc = word.Documents.Open(docPathTrue, ReadOnly=1)
     doc.ExportAsFixedFormat(pdfPath,
@@ -67,8 +56,4 @@ def doc2pdf_linux(docPath, pdfPath):
 
 if __name__ == '__main__':
     doc2pdf(sys.argv[1], sys.argv[2])
-    print("运行执行");
-    # doc_file = "D:\\python-codes\\project\word2pdf\\[CM-IM-005-V1.0]信息安全策略.doc"
-    # pdf_file = "D:\\python-codes\\project\word2pdf\\[CM-IM-005-V1.0]信息安全策略.pdf"
-    # print(os.path.isfile(doc_file))
-    # doc2pdf(doc_file, pdf_file)
+    # print("运行执行");
