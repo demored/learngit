@@ -9,4 +9,7 @@ build
 *.doc
 *.docx
 *.pdf
+*.spec
+替换目录
+
 
