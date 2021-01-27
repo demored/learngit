@@ -5,7 +5,7 @@ import shutil
 import sys
 # 定义文件目录为当前目录
 work_dir = os.path.abspath('.')
-replace_dir = work_dir+"\\替换目录\\"
+replace_dir = work_dir+"\\test\\替换目录\\"
 result_dir = work_dir+"\\替换结果\\"
 
 word = Dispatch('kwps.Application')
@@ -68,6 +68,7 @@ if __name__ == '__main__':
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
+    print(result_dir);
     # 如果存在doc文件则将doc转换成docx
     doc_files = get_dir_doc_files(replace_dir)
     if len(doc_files) > 0:
