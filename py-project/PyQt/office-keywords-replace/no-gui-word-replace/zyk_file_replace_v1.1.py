@@ -18,7 +18,7 @@ import shutil
 import zipfile
 
 # 定义文件目录为当前目录
-work_dir = os.path.abspath('.')
+work_dir = os.path.abspath('..')
 replace_dir = work_dir+"\\替换目录\\"
 result_dir = work_dir+"\\替换结果\\"
 

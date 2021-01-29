@@ -5,6 +5,9 @@ import os
 import time
 import shutil
 
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import QEventLoop, QTimer
+from PyQt5.QtGui import QPainter, QColor
 #PyQt5中使用的基本控件都在PyQt5.QtWidgets模块中
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow,QGroupBox, QPushButton, QLabel, QHBoxLayout, QVBoxLayout, QGridLayout, QFormLayout, QLineEdit, QTextEdit, QInputDialog, QFileDialog, QMessageBox, QDesktopWidget
 
@@ -25,7 +28,9 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
         #添加开始转换按钮信号和槽
         self.start_transfer.clicked.connect(self.transfer)
+
         self.word = Dispatch('kwps.Application')
+
 
     #需要替换的目录
     def replacePath(self):
@@ -45,10 +50,9 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         else:
             self.showMsg('错误', '您选择的目录不存在，请重新选择！')
 
-
     # 显示消息
-    def showMsg(self, tit, content, icon=3):
-        box = QMessageBox(QMessageBox.Question, tit, content)
+    def showMsg(self, title, content, icon=3):
+        box = QMessageBox(QMessageBox.Warning, title, content)
         # 设置左上角消息框图标
         # box.setWindowIcon(QIcon(r'E:\site\python\cutimg\favicon.ico'))
         # 添加按钮，可用中文
@@ -65,8 +69,8 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         self.replace_dir = self.ori_dir_input.text()
         #保存的目录
         self.save_dir = self.replace_dir_input.text()
-        #关键词
-        self.keywords = self.replace_words.toPlainText()
+        #关键词，并且去除收尾空格
+        self.keywords = self.replace_words.toPlainText().strip()
 
         if not os.path.isdir(self.replace_dir) or not os.path.isdir(self.save_dir):
             self.showMsg('错误', '您选择的目录不存在，请重新选择！')
@@ -78,7 +82,6 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
 
-
         #开始替换
         self.replace_tool()
         #将转换结果输出到界面上
@@ -86,10 +89,10 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
 
     #删除目录及目录下的所有文件
-    def del_dir(self, del_path):
-        del_list = os.listdir(del_path)
+    def del_dir(self, filepath):
+        del_list = os.listdir(filepath)
         for f in del_list:
-            file_path = os.path.join(del_path, f)
+            file_path = os.path.join(filepath, f)
             if os.path.isfile(file_path):
                 os.remove(file_path)
             elif os.path.isdir(file_path):
@@ -97,15 +100,19 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
 
     #将doc替换成docx
     def doc2docx(self, file):
-        file = file.replace('\\', '/')
+        #获取文件目录，文件名带后缀，文件名，后缀
         file_dir, tmpfilename = os.path.split(file)
         file_name, extension = os.path.splitext(tmpfilename)
-        # self.result_display.setPlainText(file_name+"\n"+file_dir+"\n"+extension)
         doc = self.word.Documents.Open(file)
-        doc.SaveAs(file_dir + "/" +file_name + '.docx', 12)  #12表示docx格式
+
+        new_file = file_dir + "/" +file_name + '.docx'
+        doc.SaveAs(new_file, 12)  #12表示docx格式
         doc.Close()
         #删除doc文件
         os.remove(file)
+
+        #docx文件转换
+        self.docx_keywords_replace(new_file)
 
     #将目录及子目录下的文件copy到另一个目录
     def deep_copy_dir(self, origin_dir, target_dir):
@@ -126,45 +133,70 @@ class MyMainForm(QMainWindow, Ui_MainWindow):
     def recurse_transfer_file(self, path):
         for root, dirs, files in os.walk(path):
             for file in files:
-                # self.result_display.setPlainText(file+"\n"+docx_name)
-                # 判断同名的docx文件是否存在如果存在，则删除doc文件不进行转换
+                file = file.replace('\\', '/')
                 src_file = os.path.join(root, file)
+
+                #doc文件，先进行转换
                 if src_file.endswith(".doc") and not src_file.startswith('~$'):
-                    # self.result_display.setPlainText(src_file)
+                    self.display_result("{src_file}格式转换".format(src_file=src_file))
                     self.doc2docx(src_file)
-        self.word.Quit()
+                elif src_file.endswith(".docx") and not src_file.startswith('~$'):
+                    self.docx_keywords_replace(src_file)
+                elif src_file.endswith(".xls") and not src_file.startswith('~$'):
+                    pass
+                elif src_file.endswith(".xlsx") and not src_file.startswith('~$'):
+                    pass
+                elif src_file.endswith(".pdf") and not src_file.startswith('~$'):
+                    pass
 
 
     #文件关键字替换
-    # def file_keywords_replace(self, file):
-    #     doc = self.word.Documents.Open(file)
-    #         line = f.readline()
-    #         if line:
-    #             split_list = line.split('|')
-    #             old_word = split_list[0].replace('\r', '').replace('\n', '').replace('\t', '')
-    #             new_word = split_list[1].replace('\r', '').replace('\n', '').replace('\t', '')
-    #             self.word.Selection.Find.Execute(old_word, False, False, False, False, False, True, 1, True, new_word, 2)
-    #             file_name = file_name.replace(old_word, new_word)
-    #         else:
-    #             break
-    #     # doc.SaveAs(file)
-    #     # print("{0}{1}.docx".format(result_dir, file_name))
-    #
-    #     doc.SaveAs(r"{0}{1}.docx".format(result_dir, file_name))
-    #     if origin_file_name != file_name:
-    #         os.remove(file)
-    #     doc.Close()
+    def docx_keywords_replace(self, file):
+
+        # 获取文件目录，文件名带后缀，文件名，后缀
+        file_dir, tmpfilename = os.path.split(file)
+        file_name, extension = os.path.splitext(tmpfilename)
+        origin_file_name = file_name
+        doc = self.word.Documents.Open(file)
+        # 每行
+        every_line = self.keywords.split('\n')
+        for line in every_line:
+            split_list = line.split('|')
+            old_word = split_list[0].strip().replace('\r', '').replace('\n', '').replace('\t', '')
+            new_word = split_list[1].strip().replace('\r', '').replace('\n', '').replace('\t', '')
+            self.word.Selection.Find.Execute(old_word, False, False, False, False, False, True, 1, True, new_word, 2)
+            file_name = file_name.replace(old_word, new_word)
+            display_content = "{file}进行{old_word}->{new_word}替换".format(file=file, old_word = old_word, new_word = new_word)
+            self.display_result(display_content)
+        doc.SaveAs(r"{0}/{1}.docx".format(file_dir, file_name))
+        if origin_file_name != file_name:
+            os.remove(file)
+        doc.Close()
+        # self.word.Quit()
+
+    #将处理结果实时显示到控制台
+    def display_result(self,msg):
+        self.result_display.append("{msg}\n".format(msg=msg))
+        # self.cursor = self.result_display.textCursor()
+        # self.result_display.moveCursor(self.cursor.End)
+        QApplication.processEvents()
 
 
     #核心替换功能
     def replace_tool(self):
+        self.result_display.clear()
+        self.display_result("正进行目录清理")
         # 转换前先清空目录下文件
         self.del_dir(self.save_dir)
+
+        self.display_result("正进行目录文件拷贝")
         #将原始目录及子目录文件全部拷贝至新目录
         self.deep_copy_dir(self.replace_dir, self.save_dir)
+
+        self.display_result("正进行文件关键词替换")
         #递归处理存储目录下的文件
         self.recurse_transfer_file(self.save_dir)
-        # self.result_display.setPlainText(self.save_dir)
+        self.display_result("全部操作完毕")
 
 
 if __name__ == "__main__":
