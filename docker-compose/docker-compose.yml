@@ -1,0 +1,46 @@
+#第一级
+version: "3"
+services:
+  #第二级别服务
+  #设置nginx
+  nginx:
+    image: nginx:latest
+    container_name: webserver-1
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx-config:/etc/nginx
+      - nginx-log:/var/log/nginx
+      - nginx-html:/usr/share/nginx/html
+
+  #设置mysql
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-1
+    restart: always
+    ports:
+    - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+    volumes:
+      - mysql-config:/etc/mysql
+      - mysql-log:/var/log/mysql
+      - mysql-data:/var/lib/mysql
+
+  #设置php
+  php7.4:
+    image: php:7.4-fpm
+    container_name: php-7.4
+
+volumes:
+  nginx-html:
+  nginx-config:
+  nginx-log:
+  mysql-config:
+  mysql-log:
+  mysql-data:
+
